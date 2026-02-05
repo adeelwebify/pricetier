@@ -25,6 +25,16 @@ class Updater {
 
     add_filter('pre_set_site_transient_update_plugins', [$this, 'check_update']);
     add_filter('plugins_api', [$this, 'check_info'], 10, 3);
+    add_action('upgrader_process_complete', [$this, 'purge'], 10, 2);
+  }
+
+  public function purge($upgrader, $options) {
+    if ($this->cache_allowed &&
+        'update' === $options['action'] &&
+        'plugin' === $options['type']
+    ) {
+      delete_transient($this->cache_key);
+    }
   }
 
   public function check_update($transient) {

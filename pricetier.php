@@ -4,7 +4,7 @@
  * Plugin Name:       PriceTier
  * Plugin URI:        https://adeelm.com/plugin/pricetier
  * Description:       Cost-based pricing tiers for selected WooCommerce users.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            Adeel M.
@@ -26,7 +26,7 @@ defined('ABSPATH') || exit;
  * Plugin constants
  *
  */
-define('PRICETIER_VERSION', '1.0.1');
+define('PRICETIER_VERSION', '1.0.2');
 define('PRICETIER_FILE', __FILE__);
 define('PRICETIER_DIR', plugin_dir_path(__FILE__));
 define('PRICETIER_URL', plugin_dir_url(__FILE__));

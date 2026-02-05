@@ -37,6 +37,6 @@ final class Plugin {
     Pricing::init();
 
     // Auto-Updates
-    new Updater('pricetier', PRICETIER_VERSION, 'adeelwebify', 'pricetier');
+    new Updater(PRICETIER_FILE, PRICETIER_VERSION, 'adeelwebify', 'pricetier');
   }
 }

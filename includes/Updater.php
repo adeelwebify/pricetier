@@ -7,17 +7,19 @@ defined('ABSPATH') || exit;
 class Updater {
 
   private $plugin_slug;
+  private $plugin_basename;
   private $version;
   private $cache_key;
   private $cache_allowed;
   private $github_owner;
   private $github_repo;
 
-  public function __construct(string $plugin_slug, string $version, string $github_owner, string $github_repo) {
-    $this->plugin_slug = $plugin_slug;
+  public function __construct(string $plugin_file, string $version, string $github_owner, string $github_repo) {
+    $this->plugin_basename = plugin_basename($plugin_file);
+    $this->plugin_slug = dirname($this->plugin_basename);
     $this->version = $version;
-    $this->cache_key = 'pricetier_updater_' . $plugin_slug . '_release_info';
-    $this->cache_allowed = false; // Set to true to enable 12-hour caching
+    $this->cache_key = 'pricetier_updater_' . $this->plugin_slug . '_release_info';
+    $this->cache_allowed = false; // Disable cache for debugging/instant updates
     $this->github_owner = $github_owner;
     $this->github_repo = $github_repo;
 
@@ -35,7 +37,7 @@ class Updater {
     if ($remote && version_compare($this->version, $remote->version, '<')) {
       $res = new \stdClass();
       $res->slug = $this->plugin_slug;
-      $res->plugin = $this->plugin_slug . '/pricetier.php'; // Assuming folder/file structure
+      $res->plugin = $this->plugin_basename; // Correctly matches installed file path "folder/pricetier.php"
       $res->new_version = $remote->version;
       $res->tested = $remote->tested;
       $res->package = $remote->download_url;
@@ -82,7 +84,13 @@ class Updater {
         'timeout' => 10
       ]);
 
-      if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
+      if (is_wp_error($response)) {
+        // error_log('PriceTier Updater Error: ' . $response->get_error_message());
+        return false; 
+      }
+      
+      if (200 !== wp_remote_retrieve_response_code($response)) {
+        // error_log('PriceTier Updater API Error: ' . wp_remote_retrieve_response_code($response));
         return false;
       }
 
@@ -115,7 +123,7 @@ class Updater {
       $remote->sections = [
         'description' => 'Latest version from GitHub.',
         'installation' => 'Install via the Updates page.',
-        'changelog' => $body->body
+        'changelog' => isset($body->body) ? nl2br($body->body) : 'No changelog provided.' // Use body direct from GH
       ];
 
       set_transient($this->cache_key, $remote, 12 * HOUR_IN_SECONDS);

@@ -1,4 +1,3 @@
-
 import { initRules } from './modules/rules.js';
 import { initSelects } from './modules/selects.js';
 import { initLookup } from './modules/lookup.js';
@@ -24,12 +23,12 @@ jQuery(function ($) {
       const html = ruleTemplate.replace(/__INDEX__/g, index);
       const template = document.createElement('template');
       template.innerHTML = html.trim();
-      
+
       const newNode = template.content.firstElementChild;
       container.appendChild(newNode);
-      
+
       $(document.body).trigger('wc-enhanced-select-init');
-      
+
       // Re-init for new node
       if (window.PriceTierInitSingleRule) window.PriceTierInitSingleRule($(newNode));
       initSelects(ajaxUrl, nonce);

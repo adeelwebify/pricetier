@@ -1,4 +1,3 @@
-
 /**
  * Rules UI Logic
  * Handles toggling conditions and users
@@ -76,31 +75,35 @@ function updateUserConditions($rule, ajaxUrl, nonce) {
  * -------------------------------------------------------------------*/
 
 export function initRules(ajaxUrl, nonce) {
+  const $ = window.jQuery;
+
   // Logic to update a single specific rule block
   function initSingleRule($rule) {
-     updateProductConditions($rule);
-     updateUserConditions($rule, ajaxUrl, nonce);
-     updatePricingConditions($rule);
+    updateProductConditions($rule);
+    updateUserConditions($rule, ajaxUrl, nonce);
+    updatePricingConditions($rule);
 
-     $rule.find('input[type=radio]')
-        .off('change.pricetier')
-        .on('change.pricetier', function () {
-           updateProductConditions($rule);
-           updateUserConditions($rule, ajaxUrl, nonce);
-           updatePricingConditions($rule);
-        });
+    $rule
+      .find('input[type=radio]')
+      .off('change.pricetier')
+      .on('change.pricetier', function () {
+        updateProductConditions($rule);
+        updateUserConditions($rule, ajaxUrl, nonce);
+        updatePricingConditions($rule);
+      });
 
-     // Specific user type toggle listener (redundancy check kept from original)
-     $rule.find('input[name*="[users][type]"]')
-        .off('change.pricetier_user')
-        .on('change.pricetier_user', function () {
-           updateUserConditions($rule, ajaxUrl, nonce);
-        });
+    // Specific user type toggle listener (redundancy check kept from original)
+    $rule
+      .find('input[name*="[users][type]"]')
+      .off('change.pricetier_user')
+      .on('change.pricetier_user', function () {
+        updateUserConditions($rule, ajaxUrl, nonce);
+      });
   }
 
   // Init all existing
-  $('.pricetier-rule').each(function() {
-      initSingleRule($(this));
+  $('.pricetier-rule').each(function () {
+    initSingleRule($(this));
   });
 
   // Export for dynamic adding

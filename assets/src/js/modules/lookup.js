@@ -1,8 +1,8 @@
-
 /**
  * Cost Lookup Tool
  */
 export function initLookup(ajaxUrl, nonce) {
+  const $ = window.jQuery;
   const $input = $('#pricetier-lookup-input');
   const $result = $('#pricetier-lookup-result');
 

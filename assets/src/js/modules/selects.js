@@ -1,8 +1,9 @@
-
 /**
  * Select2 and Dependency Initialization
  */
 export function initSelects(ajaxUrl, nonce) {
+  const $ = window.jQuery;
+
   /* Products (Woo native search) */
   $('.wc-product-search')
     .filter(':not(.enhanced)')

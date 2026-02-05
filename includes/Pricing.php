@@ -84,9 +84,15 @@ final class Pricing {
 
       // Rounding
       switch ($pricing['rounding']) {
-        case 'up':      $new_price = ceil($new_price); break;
-        case 'down':    $new_price = floor($new_price); break;
-        case 'nearest': $new_price = round($new_price); break;
+        case 'up':
+          $new_price = ceil($new_price);
+          break;
+        case 'down':
+          $new_price = floor($new_price);
+          break;
+        case 'nearest':
+          $new_price = round($new_price);
+          break;
       }
 
       // Bounds
@@ -102,7 +108,7 @@ final class Pricing {
   private static function get_cost(WC_Product $product): ?float {
     $key = Config::get_cost_meta_key();
     if (!$key) return null;
-    $cost = $product->get_meta($key);
+    $cost = get_post_meta($product->get_id(), $key, true);
     return is_numeric($cost) ? (float) $cost : null;
   }
 
@@ -132,12 +138,16 @@ final class Pricing {
     // User Match
     $u_cond = $rule['users'];
     $u_match = false;
-    
+
     if ($user && $user->exists()) {
       switch ($u_cond['type']) {
-        case 'all':   $u_match = true; break;
-        case 'users': $u_match = in_array($user->ID, $u_cond['users'], true); break;
-        case 'roles': 
+        case 'all':
+          $u_match = true;
+          break;
+        case 'users':
+          $u_match = in_array($user->ID, $u_cond['users'], true);
+          break;
+        case 'roles':
           foreach ($user->roles as $role) {
             if (in_array($role, $u_cond['roles'], true)) {
               $u_match = true;
@@ -155,10 +165,14 @@ final class Pricing {
     $pid    = $product->get_id();
 
     switch ($p_cond['type']) {
-      case 'all':        return true;
-      case 'products':   return in_array($pid, $p_cond['products'], true);
-      case 'categories': return has_term($p_cond['categories'], 'product_cat', $pid);
-      case 'tags':       return has_term($p_cond['tags'], 'product_tag', $pid);
+      case 'all':
+        return true;
+      case 'products':
+        return in_array($pid, $p_cond['products'], true);
+      case 'categories':
+        return has_term($p_cond['categories'], 'product_cat', $pid);
+      case 'tags':
+        return has_term($p_cond['tags'], 'product_tag', $pid);
       case 'attribute':
         if (empty($p_cond['attribute']['taxonomy'])) return false;
         return has_term($p_cond['attribute']['terms'], $p_cond['attribute']['taxonomy'], $pid);

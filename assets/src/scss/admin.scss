@@ -1,0 +1,224 @@
+@use 'sass:color';
+
+// Variables
+$pt-primary: #ff5739;
+$pt-bg: #f6f3ed;
+$pt-border: #e0e0e0;
+
+/**
+ * Global WordPress Admin Overrides
+ */
+body {
+	background-color: $pt-bg;
+}
+
+#wpcontent {
+	padding: 0 !important;
+}
+
+/**
+ * Price Tier Main Container
+ */
+.pricetier {
+	&.wrap {
+		margin: 0 !important;
+	}
+
+	// Form table adjustments
+	.form-table {
+		th {
+			padding: 5px 0px 5px 0;
+		}
+
+		h3 {
+			background: $pt-bg;
+			padding: 0.8rem 1rem;
+			font-weight: bold;
+		}
+	}
+
+	// Buttons
+	.button-primary,
+	.button-primary-outline {
+		font-size: 15px;
+		font-weight: 500;
+		border-color: $pt-primary;
+		box-shadow: none;
+		border-radius: 0;
+	}
+
+	.button-primary {
+		background-color: $pt-primary;
+
+		&:hover {
+			background-color: color.adjust($pt-primary, $lightness: -10%);
+			border-color: color.adjust($pt-primary, $lightness: -10%);
+		}
+	}
+
+	.button-primary-outline {
+		background-color: transparent;
+		color: $pt-primary;
+
+		&:hover {
+			background-color: $pt-primary;
+			color: #fff;
+		}
+	}
+
+	// General form inputs
+	input[type='number'],
+	input[type='text'],
+	select {
+		width: 100%;
+		max-width: 100%;
+		padding: 0.3em 0.5em;
+		border-radius: 0;
+		border: 1px solid $pt-border;
+	}
+
+	// Custom toggle switch for checkboxes
+	input[type='checkbox'] {
+		position: relative;
+		width: 50px;
+		height: 26px;
+		appearance: none;
+		-webkit-appearance: none;
+		background: #ccd0d4;
+		border-radius: 999px;
+		border: none;
+		outline: none;
+		cursor: pointer;
+		transition: background 0.2s ease;
+		vertical-align: middle;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 2px;
+			left: 2px;
+			width: 21px;
+			height: 21px;
+			background: #fff;
+			border-radius: 50%;
+			transition: transform 0.1s ease;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+		}
+
+		&:checked {
+			background: $pt-primary;
+
+			&::before {
+				transform: translate(28px, 3px);
+			}
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px rgba(201, 243, 29, 0.4);
+		}
+	}
+
+	// Page Header
+	&__header {
+		background-color: white;
+		border-bottom: 1px solid $pt-border;
+		padding: 1.6em 2em;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+
+		> p {
+			font-size: 1.5rem;
+			margin-block: 0;
+			color: #000;
+			font-weight: 500;
+		}
+	}
+
+	// Main content area
+	&__main {
+		padding: 3rem 1.5rem 1.5rem;
+		width: 100%;
+		max-width: 800px;
+		margin-inline: auto;
+	}
+
+	// Card component
+	&__card {
+		background-color: #fff;
+		padding: 30px;
+		border: 1px solid $pt-border;
+		margin-bottom: 3rem;
+
+		&--lookup {
+			h3 {
+				margin-block: 0;
+			}
+
+			.select2-container .select2-selection--single {
+				border-color: $pt-border;
+				padding: 5px 10px;
+				height: auto;
+
+				.select2-selection__arrow {
+					top: 5px !important;
+				}
+			}
+		}
+	}
+
+	// Pricing rule item
+	&-rule {
+		background-color: #fff;
+		padding: 1rem;
+		border: 1px solid $pt-border;
+	}
+
+	// Select2 library overrides
+	.select2-container {
+		max-width: 100%;
+
+		&--default {
+			.select2-selection--multiple .select2-selection__choice {
+				width: 200px;
+				max-width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.select2-selection--single .select2-selection__rendered {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+	}
+
+	// Action buttons and results
+	.add-rule-wrapper {
+		text-align: right;
+		margin-bottom: 2rem;
+	}
+
+	.button.pricetier-delete-rule {
+		color: #da0808;
+		font-weight: 500;
+		&:hover {
+			background-color: transparent;
+		}
+	}
+
+	#pricetier-lookup-result {
+		display: none;
+		margin-top: 15px;
+	}
+}
+
+/**
+ * Browser/WordPress Version Specific Fixes
+ */
+.wc-wp-version-gte-53 .select2-container .select2-selection--multiple {
+	border-color: $pt-border;
+}

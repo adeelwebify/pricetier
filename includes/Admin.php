@@ -51,12 +51,12 @@ final class Admin {
     $cost_key = $settings['cost_meta_key'] ?? '_wc_cog_cost';
 ?>
     <div class="wrap pricetier">
-      <div class="pricetier__header">
+      <header class="pricetier__header">
         <p><?php esc_html_e('PriceTier', 'pricetier'); ?></p>
         <a href="<?php echo esc_url('https://github.com/adeelwebify/pricetier'); ?>" target="_blank" class="button button-primary"><?php esc_html_e('Documentation ↗', 'pricetier'); ?></a>
-      </div>
+      </header>
 
-      <div class="pricetier__main">
+      <main class="pricetier__main">
         <?php self::render_lookup_section(); ?>
 
         <form method="post">
@@ -65,7 +65,7 @@ final class Admin {
           <?php self::render_notices(); ?>
 
           <h2><?php esc_html_e('Global Settings', 'pricetier'); ?></h2>
-          <div class="pricetier__card">
+          <section class="pricetier__card">
             <table class="form-table" role="presentation">
               <tr>
                 <th scope="row"><label for="pt_enabled"><?php esc_html_e('Enable PriceTier', 'pricetier'); ?></label></th>
@@ -85,13 +85,13 @@ final class Admin {
                 </td>
               </tr>
             </table>
-          </div>
+          </section>
 
           <?php self::render_rules_section(); ?>
 
           <p><button type="submit" class="button button-primary"><?php esc_html_e('Save Settings', 'pricetier'); ?></button></p>
         </form>
-      </div>
+      </main>
 
     </div>
   <?php
@@ -105,9 +105,9 @@ final class Admin {
     $rules = get_option('pricetier_rules', []);
   ?>
     <h2><?php esc_html_e('Pricing Rules', 'pricetier'); ?></h2>
-    <div id="pricetier-rules">
+    <section id="pricetier-rules">
       <?php foreach ($rules as $idx => $rule) self::render_rule_block(Config::sanitize_rule((array)$rule), $idx); ?>
-    </div>
+    </section>
     <p class="add-rule-wrapper">
       <button type="button" id="pricetier-add-rule" class="button button-primary-outline"><?php esc_html_e('Add Rule', 'pricetier'); ?></button>
     </p>
@@ -117,11 +117,11 @@ final class Admin {
   private static function render_lookup_section(): void {
   ?>
     <h3><?php esc_html_e('Cost Lookup', 'pricetier'); ?></h3>
-    <div class="pricetier__card pricetier__card--lookup">
+    <section class="pricetier__card pricetier__card--lookup">
       <p class="description"><?php esc_html_e('Search for a product to see its current cost and price details.', 'pricetier'); ?></p>
 
       <div>
-        <select id="pricetier-lookup-input" class="wc-product-search" data-action="woocommerce_json_search_products_and_variations" data-placeholder="<?php esc_attr_e('Search product...', 'pricetier'); ?>" style="width:100%"></select>
+        <select id="pricetier-lookup-input" class="wc-product-search" data-action="woocommerce_json_search_products_and_variations" data-placeholder="<?php esc_attr_e('Search product...', 'pricetier'); ?>"></select>
       </div>
 
       <div id="pricetier-lookup-result">
@@ -148,7 +148,7 @@ final class Admin {
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
   <?php
   }
 
@@ -380,24 +380,28 @@ final class Admin {
     if (!current_user_can('manage_woocommerce')) return;
 
     // Save Settings
-    $raw_s = $_POST['pricetier_settings'] ?? [];
+    $raw_settings = $_POST['pricetier_settings'] ?? [];
+    // Handle unchecked checkbox (not sent in POST)
+    if (!isset($raw_settings['enabled'])) $raw_settings['enabled'] = 0;
     update_option('pricetier_settings', [
-      'enabled' => !empty($raw_s['enabled']),
-      'cost_meta_key' => sanitize_key(wp_unslash($raw_s['cost_meta_key'] ?? ''))
+      'enabled' => !empty($raw_settings['enabled']),
+      'cost_meta_key' => sanitize_key(wp_unslash($raw_settings['cost_meta_key'] ?? ''))
     ]);
 
     // Save Rules
-    $raw_r = $_POST['pricetier_rules'] ?? [];
+    $raw_rules = $_POST['pricetier_rules'] ?? [];
     $saved = [];
-    foreach ($raw_r as $k => $r) {
+    foreach ($raw_rules as $k => $r) {
       if ($k === 'new' && empty($r['name'])) continue;
+      // Handle unchecked checkbox (not sent in POST)
+      if (!isset($r['enabled'])) $r['enabled'] = 0;
       // Note: Config::sanitize_rule handles deep sanitization, but we should unslash first
       $saved[] = Config::sanitize_rule(wp_unslash($r));
     }
     update_option('pricetier_rules', $saved);
     self::add_notice(__('Settings saved.', 'pricetier'));
 
-    // PRG pattern: Redirect to prevent form resubmission and render quirks
+    // PRG pattern: Redirect to prevent form resubmission
     wp_safe_redirect(add_query_arg('saved', 'true', remove_query_arg('saved')));
     exit;
   }

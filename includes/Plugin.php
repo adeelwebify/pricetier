@@ -8,10 +8,6 @@ namespace PriceTier;
 
 defined('ABSPATH') || exit;
 
-use PriceTier\Admin\Ajax;
-use PriceTier\Admin\Assets;
-use PriceTier\Admin\Menu;
-
 final class Plugin {
 
   private static ?Plugin $instance = null;
@@ -29,11 +25,11 @@ final class Plugin {
 
   private function init(): void {
     Config::is_enabled(); // Ensure defaults if needed? No, purely static.
-    
+
     if (is_admin()) {
       Admin::init();
     }
-    
+
     Pricing::init();
 
     // Auto-Updates
